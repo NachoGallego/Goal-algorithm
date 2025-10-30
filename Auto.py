@@ -23,7 +23,7 @@ def matchDaySAStats(matchday):
 
 
   uri = 'https://api.football-data.org/v4/competitions/SA/standings'
-  headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+  headers = { 'X-Auth-Token': '', 'Accept-Encoding': '' }
 
   response = requests.get(uri, headers=headers)
   data = response.json()
@@ -44,7 +44,7 @@ def matchDaySAStats(matchday):
     id=i[0]
     teamList=[]
     uri = 'https://api.football-data.org/v4/teams/'+str(id)+'/matches'
-    headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+    headers = { 'X-Auth-Token': '', 'Accept-Encoding': '' }
 
     response = requests.get(uri, headers=headers)
     data = response.json()
@@ -88,7 +88,7 @@ def matchDaySAStats(matchday):
 
     #Next step is to calculate PL average of goals conceded and scored by Local and Away teams
   uri = 'https://api.football-data.org/v4/competitions/SA/matches'
-  headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+  headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
   response = requests.get(uri, headers=headers)
   data = response.json()
@@ -200,7 +200,7 @@ def matchDayBLStats(matchday):
 
 
   uri = 'https://api.football-data.org/v4/competitions/BL1/standings'
-  headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+  headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
   response = requests.get(uri, headers=headers)
   data = response.json()
@@ -221,7 +221,7 @@ def matchDayBLStats(matchday):
     id=i[0]
     teamList=[]
     uri = 'https://api.football-data.org/v4/teams/'+str(id)+'/matches'
-    headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+    headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
     response = requests.get(uri, headers=headers)
     data = response.json()
@@ -265,7 +265,7 @@ def matchDayBLStats(matchday):
 
     #Next step is to calculate PL average of goals conceded and scored by Local and Away teams
   uri = 'https://api.football-data.org/v4/competitions/BL1/matches'
-  headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+  headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
   response = requests.get(uri, headers=headers)
   data = response.json()
@@ -376,7 +376,7 @@ def matchDayPDStats(matchday):
 
 
   uri = 'https://api.football-data.org/v4/competitions/PD/standings'
-  headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+  headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
   response = requests.get(uri, headers=headers)
   data = response.json()
@@ -397,7 +397,7 @@ def matchDayPDStats(matchday):
     id=i[0]
     teamList=[]
     uri = 'https://api.football-data.org/v4/teams/'+str(id)+'/matches'
-    headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+    headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
     response = requests.get(uri, headers=headers)
     data = response.json()
@@ -441,7 +441,7 @@ def matchDayPDStats(matchday):
 
     #Next step is to calculate PL average of goals conceded and scored by Local and Away teams
   uri = 'https://api.football-data.org/v4/competitions/PD/matches'
-  headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+  headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
   response = requests.get(uri, headers=headers)
   data = response.json()
@@ -553,7 +553,7 @@ def matchDayPLStats(matchday):
 
 
   uri = 'https://api.football-data.org/v4/competitions/PL/standings'
-  headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+  headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
   response = requests.get(uri, headers=headers)
   data = response.json()
@@ -574,7 +574,7 @@ def matchDayPLStats(matchday):
     id=i[0]
     teamList=[]
     uri = 'https://api.football-data.org/v4/teams/'+str(id)+'/matches'
-    headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+    headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
     response = requests.get(uri, headers=headers)
     data = response.json()
@@ -618,7 +618,7 @@ def matchDayPLStats(matchday):
 
     #Next step is to calculate PL average of goals conceded and scored by Local and Away teams
   uri = 'https://api.football-data.org/v4/competitions/PL/matches'
-  headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+  headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
   response = requests.get(uri, headers=headers)
   data = response.json()
@@ -733,7 +733,7 @@ def matchDayPLStats(matchday):
 def matchDayL1Stats(matchday):
 
   uri = 'https://api.football-data.org/v4/competitions/FL1/standings'
-  headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+  headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
   response = requests.get(uri, headers=headers)
   data = response.json()
@@ -754,7 +754,7 @@ def matchDayL1Stats(matchday):
     id=i[0]
     teamList=[]
     uri = 'https://api.football-data.org/v4/teams/'+str(id)+'/matches'
-    headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+    headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
     response = requests.get(uri, headers=headers)
     data = response.json()
@@ -798,7 +798,7 @@ def matchDayL1Stats(matchday):
 
     #Next step is to calculate PL average of goals conceded and scored by Local and Away teams
   uri = 'https://api.football-data.org/v4/competitions/FL1/matches'
-  headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+  headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
   response = requests.get(uri, headers=headers)
   data = response.json()
@@ -911,7 +911,7 @@ def matchDayPL2Stats(matchday):
 
 
   uri = 'https://api.football-data.org/v4/competitions/ELC/standings'
-  headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+  headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
   response = requests.get(uri, headers=headers)
   data = response.json()
@@ -932,7 +932,7 @@ def matchDayPL2Stats(matchday):
     id=i[0]
     teamList=[]
     uri = 'https://api.football-data.org/v4/teams/'+str(id)+'/matches'
-    headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+    headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
     response = requests.get(uri, headers=headers)
     data = response.json()
@@ -976,7 +976,7 @@ def matchDayPL2Stats(matchday):
 
     #Next step is to calculate PL average of goals conceded and scored by Local and Away teams
   uri = 'https://api.football-data.org/v4/competitions/ELC/matches'
-  headers = { 'X-Auth-Token': 'babfc8832fa344beb6f5398516d66ffe', 'Accept-Encoding': '' }
+  headers = { 'X-Auth-Token': '-----', 'Accept-Encoding': '' }
 
   response = requests.get(uri, headers=headers)
   data = response.json()
