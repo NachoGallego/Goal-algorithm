@@ -1,10 +1,9 @@
-"""
-Cleaned and consolidated version of Auto.py.
-- Extracted HTTP / gspread helpers
-- Consolidated duplicated match-day logic into a generic function + thin wrappers
-- Preserved public API: matchDay* functions, read/write sheet helpers, ML functions and utilities
-- Example calls at bottom are left commented out
-"""
+# Cleaned and consolidated version of Auto.py.
+# - Extracted HTTP / gspread helpers
+# - Consolidated duplicated match-day logic into a generic function + thin wrappers
+# - Preserved public API: matchDay* functions, read/write sheet helpers, ML functions and utilities
+# - Example calls at bottom are left commented out
+
 from datetime import datetime
 from typing import List, Tuple, Optional, Any
 import time
@@ -29,9 +28,9 @@ except Exception:
     gc = None
 
 # Configuration
-API_TOKEN = "-----"  # replace with your token
+API_TOKEN = ""  # replace with your token
 BASE_COMPETITIONS_URI = "https://api.football-data.org/v4/competitions"
-RATE_SLEEP = 7
+RATE_SLEEP = 10
 COMPETITION_TEAM_COUNTS = {"PL": 20, "BL1": 18, "PD": 20, "SA": 20, "FL1": 18, "ELC": 24}
 
 # HTTP session
@@ -267,14 +266,14 @@ def assign_target(df: pd.DataFrame) -> pd.Series:
 clf: Optional[DecisionTreeRegressor] = None
 try:
     # attempt to read sheets used originally
-    sheet_names = ["PLGames2425", "SAGames2425", "PDGames2425", "L1Games2425", "BLGames2425", "PL2Games2425"]
+    sheet_names = ["PLGames2526", "SAGames2526", "PDGames2526", "L1Games2526", "BLGames2526", "PL2Games2526"]
     final_df = read_google_sheets_into_dataframe(sheet_names)
     if not final_df.empty:
         df = final_df[["Home team id", "Away team id", "+0 HG", "+1 HG", "+2 HG", "+0 AG", "+1 AG", "+2 AG", "HG", "AG"]]
         df = df.drop(df[df.eq("nan").any(axis=1)].index)
         for col in ["Home team id", "Away team id", "HG", "AG", "+0 HG", "+1 HG", "+2 HG", "+0 AG", "+1 AG", "+2 AG"]:
             if col in df.columns:
-                df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
+                df[col] = pd.to_numeric(df[col].astype(str).str.replace(',', '.'), errors="coerce").fillna(0)
         y = assign_target(df)
         X = prepare_features(df)
         if not X.empty:
@@ -308,7 +307,7 @@ def alg2(sheetname: List[str], df: pd.DataFrame):
     data = data.drop(data[data.eq("nan").any(axis=1)].index)
     for col in ["Home team id", "Away team id", "HG", "AG", "+0 HG", "+1 HG", "+2 HG", "+0 AG", "+1 AG", "+2 AG"]:
         if col in data.columns:
-            data[col] = pd.to_numeric(data[col], errors="coerce").fillna(0)
+            data[col] = pd.to_numeric(data[col].astype(str).str.replace(',', '.'), errors="coerce").fillna(0)
     y = assign_target(data)
     X = prepare_features(data)
     model = DecisionTreeRegressor()
@@ -321,25 +320,46 @@ def alg2(sheetname: List[str], df: pd.DataFrame):
 def gamesToHist(f, gameWeek: int, sheet_names: List[str], histName: str, pageNum: int):
     """
     Generate predictions for a fixture function f, combine predictions and upload to histName sheet.
+    If the Google Sheet (spreadsheet) named `histName` does not exist, it will be created.
     """
     df = f(gameWeek)
     dfPred = prepare(df)
     if clf is None:
         raise RuntimeError("Global model not trained; alg2 or local training required")
+
     y_pred1 = clf.predict(dfPred)
     y_pred2 = alg2(sheet_names, dfPred)
-    df = df.drop(columns=[c for c in ["Home team id", "Away team id", "heg", "aeg", "HG", "AG"] if c in df.columns], errors="ignore")
+
+    df = df.drop(
+        columns=[c for c in ["Home team id", "Away team id", "heg", "aeg", "HG", "AG"] if c in df.columns],
+        errors="ignore"
+    )
+
     df["A1"] = y_pred1
     df["A2"] = y_pred2
     df["Result"] = ""
     df["Bet"] = ""
+
     ensure_gspread_auth()
     if gc is None:
         raise RuntimeError("gspread not authenticated")
-    worksheet = gc.open(histName)
+
+    try:
+        worksheet = gc.open(histName)
+    except gspread.SpreadsheetNotFound:
+        print(f"Spreadsheet '{histName}' not found. Creating a new one...")
+        worksheet = gc.create(histName)
+        user_email = gc.auth.service_account_email
+        worksheet.share(user_email, perm_type='user', role='writer')
+
     sheet_name = f"Sheet{pageNum}"
-    worksheet.add_worksheet(title=sheet_name, rows=1, cols=1)
-    sheet = worksheet.worksheet(sheet_name)
+
+    try:
+        sheet = worksheet.worksheet(sheet_name)
+    except gspread.WorksheetNotFound:
+        worksheet.add_worksheet(title=sheet_name, rows=1, cols=1)
+        sheet = worksheet.worksheet(sheet_name)
+
     sheet.update([df.columns.values.tolist()] + df.fillna(-1).values.tolist())
 
 
@@ -376,6 +396,27 @@ def paint_result(spreadsheet_name: str):
                 time.sleep(60)
             else:
                 print("Error processing sheet:", e)
+def get_next_gameweek_number(competition_code: str) -> Optional[int]:
+    url = f"{BASE_COMPETITIONS_URI}/{competition_code}/matches"
+    resp = get_session().get(url)
+    if resp.status_code != 200:
+        print("Error:", resp.json())
+        return None
+
+    data = resp.json()
+    matches = data.get("matches", [])
+    now = datetime.now()
+
+    for match in matches:
+        # utcDate examples end with 'Z', remove it to parse with fromisoformat
+        match_date = datetime.fromisoformat(match["utcDate"].rstrip("Z"))
+        if match_date > now:
+            gameweek_number = match.get("matchday")
+            print(f"Next Gameweek Number for {competition_code}: {gameweek_number}")
+            return gameweek_number
+
+    print(f"No upcoming gameweeks found for {competition_code}.")
+    return None
 
 
 def process_bet_column_by_name(spreadsheet_name: str):
@@ -401,7 +442,7 @@ def process_bet_column_by_name(spreadsheet_name: str):
         summary_sheet.clear()
     except Exception:
         summary_sheet = spreadsheet.add_worksheet(title="Summary", rows="1000", cols="26")
-    summary_sheet.append_row(["Column " + chr(65 + i) for i in range(26)])
+    summary_sheet.append_row([f"Column {chr(65 + i)}" for i in range(26)])
 
     worksheets = spreadsheet.worksheets()
     row_counter = 0
@@ -445,18 +486,6 @@ def process_bet_column_by_name(spreadsheet_name: str):
                 print("Skipping sheet due to error:", e)
     print(f"Processed all sheets. Summary updated. Total matches: {rc}")
 
-
-# Example usage (kept commented to avoid side-effects on import)
-# gamesToHist(matchDayBLStats, 34, ['BLGames2425'], 'HIST322425', 1)
-# gamesToHist(matchDayL1Stats, 34, ['L1Games2425'], 'HIST322425', 2)
-# gamesToHist(matchDayPDStats, 36, ['PDGames2425'], 'HIST322425', 3)
-# gamesToHist(matchDaySAStats, 37, ['SAGames2425'], 'HIST322425', 5)
-# gamesToHist(matchDayPLStats, 37, ['PLGames2425'], 'HIST322425', 4)
-# gamesToHist(matchDayPL2Stats, 43, ['PL2Games2425'], 'HIST312425', 6)
-# process_bet_column_by_name("HIST322425")
-# paint_result('HIST322425')
-
-
-
-
-
+#gamesToHist(matchDayPDStats, 16, ['PDGames2526'], 'HIST12526', 1) Main function to generate predictions and upload to Google Sheets
+#process_bet_column_by_name("HIST12526") Process 'Bet' column and generate summary
+#paint_result('HIST12526') Paint results in 'Bet' column based on criteria
