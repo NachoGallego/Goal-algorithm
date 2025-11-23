@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from .routers import results
 
+
 def create_application() -> FastAPI:
     application = FastAPI(
         title="Local Football Data API",
@@ -15,12 +16,15 @@ def create_application() -> FastAPI:
         return {
             "message": "Welcome to the GoalAlgo Data API.",
             "data_endpoint": "/results",
+            
             "documentation": "/docs"
         }
     # ------------------------------
 
     # Register all modular routers here
     application.include_router(results.router)
+    
+
 
     return application
 
