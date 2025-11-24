@@ -15,8 +15,8 @@ column_mapping = {
     '+0 AG': 'p_away_0',
     '+1 AG': 'p_away_1',
     '+2 AG': 'p_away_2',
-    'A1': 'home_score',
-    'A2': 'away_score',
+    'A1': 'pred_1',
+    'A2': 'pred_2',
     'Result': 'result_text',
     'Bet': 'bet_value'
 }
@@ -47,8 +47,8 @@ def run_consolidation():
         combined_df.rename(columns=column_mapping, inplace=True)
         
         # Data Cleaning: ensure scores are integers and handle missing values
-        combined_df['home_score'] = combined_df['home_score'].replace({np.nan: 0}).astype(int)
-        combined_df['away_score'] = combined_df['away_score'].replace({np.nan: 0}).astype(int)
+        combined_df['pred_1'] = combined_df['pred_1'].replace({np.nan: 0}).astype(int)
+        combined_df['pred_2'] = combined_df['pred_2'].replace({np.nan: 0}).astype(int)
         
         # Save the combined data as a CSV
         combined_df.to_csv(OUTPUT_FILE, index=False)

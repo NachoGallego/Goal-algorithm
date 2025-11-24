@@ -16,8 +16,8 @@ class FootballResult(BaseModel):
     p_away_2: float
     
     # Final Scores (Scores are forced to be integers)
-    home_score: int
-    away_score: int
+    pred_1: int
+    pred_2: int
     
     # Optional fields (can be null/NaN in the data)
     # Union handles cases where the data might be an integer, float, or string

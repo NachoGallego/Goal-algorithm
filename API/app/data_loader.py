@@ -18,8 +18,8 @@ def load_data():
         # Data Cleaning/Coercion (handling NaNs for optional fields)
         df['result_text'] = df['result_text'].replace({np.nan: None})
         df['bet_value'] = df['bet_value'].replace({np.nan: None})
-        df['home_score'] = df['home_score'].astype(int)
-        df['away_score'] = df['away_score'].astype(int)
+        df['pred_1'] = df['pred_1'].astype(int)
+        df['pred_2'] = df['pred_2'].astype(int)
         
         data_list = df.to_dict(orient='records')
         

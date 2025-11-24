@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Validated Football Results</title>
+    <style>
+        body { font-family: sans-serif; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background-color: #f0f0f0; }
+        .bet-yes { background-color: #e6ffe6; }
+        .bet-no { background-color: #ffe6e6; }
+    </style>
+</head>
+<body>
+    <h1>Matches</h1>
+
+    <p>Number of loaded matches: **{{ results | length }}**</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Local team</th>
+                <th>Away team</th>
+                <th>pred_1 - pred_2</th>
+                <th>Resume</th>
+                <th>Bet value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr class="{% if result.bet_value %}bet-yes{% else %}bet-no{% endif %}">
+                <td>{{ result.row_number }}</td>
+                <td>{{ result.home_team }}</td>
+                <td>{{ result.away_team }}</td>
+                <td>{{ result.pred_1 }} - {{ result.pred_2 }}</td>
+                <td>{{ result.result_text if result.result_text else 'No disponible' }}</td>
+                <td>
+                    {% if result.bet_value %}
+                        **{{ result.bet_value }}**
+                    {% else %}
+                        *Ninguna Apuesta*
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
