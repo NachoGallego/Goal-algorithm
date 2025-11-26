@@ -1,6 +1,6 @@
 # Goal-algorithm
 
-This project aims to predict the number of goals (+4/-1) in football games of the main european leagues.
+This project aims to predict the number of goals (-4/+1) in football games of the main european leagues.
 
 # Little context
 
