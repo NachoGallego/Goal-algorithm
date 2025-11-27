@@ -1,8 +1,3 @@
-# Cleaned and consolidated version of Auto.py.
-# - Extracted HTTP / gspread helpers
-# - Consolidated duplicated match-day logic into a generic function + thin wrappers
-# - Preserved public API: matchDay* functions, read/write sheet helpers, ML functions and utilities
-# - Example calls at bottom are left commented out
 
 from datetime import datetime
 from typing import List, Tuple, Optional, Any
@@ -28,7 +23,7 @@ except Exception:
     gc = None
 
 # Configuration
-API_TOKEN = ""  # replace with your token
+API_TOKEN = "YOUR_API_KEY"  # replace with your token
 BASE_COMPETITIONS_URI = "https://api.football-data.org/v4/competitions"
 RATE_SLEEP = 10
 COMPETITION_TEAM_COUNTS = {"PL": 20, "BL1": 18, "PD": 20, "SA": 20, "FL1": 18, "ELC": 24}
@@ -279,7 +274,10 @@ try:
         if not X.empty:
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
             clf = DecisionTreeRegressor()
+
+
             clf.fit(X_train, y_train)
+
             y_pred = clf.predict(X_test)
             mae = mean_absolute_error(y_test, y_pred)
             # mse variable preserved if needed
@@ -311,8 +309,11 @@ def alg2(sheetname: List[str], df: pd.DataFrame):
     y = assign_target(data)
     X = prepare_features(data)
     model = DecisionTreeRegressor()
+
+
     if not X.empty:
         model.fit(X, y)
+
     pred_df = prepare(df)
     return model.predict(pred_df)
 
@@ -349,7 +350,9 @@ def gamesToHist(f, gameWeek: int, sheet_names: List[str], histName: str, pageNum
     except gspread.SpreadsheetNotFound:
         print(f"Spreadsheet '{histName}' not found. Creating a new one...")
         worksheet = gc.create(histName)
-        user_email = gc.auth.service_account_email
+        from google.auth import default as ga_default  # Re-import to get creds
+        creds, _ = ga_default()
+        user_email = creds.service_account_email  # Corrected line
         worksheet.share(user_email, perm_type='user', role='writer')
 
     sheet_name = f"Sheet{pageNum}"
@@ -485,6 +488,7 @@ def process_bet_column_by_name(spreadsheet_name: str):
             else:
                 print("Skipping sheet due to error:", e)
     print(f"Processed all sheets. Summary updated. Total matches: {rc}")
+
 
 #gamesToHist(matchDayPDStats, 16, ['PDGames2526'], 'HIST12526', 1) Main function to generate predictions and upload to Google Sheets
 #process_bet_column_by_name("HIST12526") Process 'Bet' column and generate summary
