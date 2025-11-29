@@ -23,7 +23,7 @@ except Exception:
     gc = None
 
 # Configuration
-API_TOKEN = "YOUR_API_KEY"  # replace with your token
+API_TOKEN = "----"  # replace with your token
 BASE_COMPETITIONS_URI = "https://api.football-data.org/v4/competitions"
 RATE_SLEEP = 10
 COMPETITION_TEAM_COUNTS = {"PL": 20, "BL1": 18, "PD": 20, "SA": 20, "FL1": 18, "ELC": 24}
@@ -321,7 +321,8 @@ def alg2(sheetname: List[str], df: pd.DataFrame):
 def gamesToHist(f, gameWeek: int, sheet_names: List[str], histName: str, pageNum: int):
     """
     Generate predictions for a fixture function f, combine predictions and upload to histName sheet.
-    If the Google Sheet (spreadsheet) named `histName` does not exist, it will be created.
+    If the Google Sheet (spreadsheet) named `histName` does not exist, it will be created
+    inside the folder named "25-26".
     """
     df = f(gameWeek)
     dfPred = prepare(df)
@@ -345,14 +346,26 @@ def gamesToHist(f, gameWeek: int, sheet_names: List[str], histName: str, pageNum
     if gc is None:
         raise RuntimeError("gspread not authenticated")
 
+   
+    drive = GoogleDriveClient()  
+    folder_list = drive.list_folders_by_name("25-26")
+
+    if not folder_list:
+        raise RuntimeError("Folder '25-26' not found in your Google Drive")
+
+    folder_id = folder_list[0]["id"]
+
     try:
         worksheet = gc.open(histName)
     except gspread.SpreadsheetNotFound:
-        print(f"Spreadsheet '{histName}' not found. Creating a new one...")
-        worksheet = gc.create(histName)
-        from google.auth import default as ga_default  # Re-import to get creds
+        print(f"Spreadsheet '{histName}' not found. Creating inside folder '25-26'...")
+
+        # Create the sheet *inside the folder*
+        worksheet = gc.create(histName, folder_id=folder_id)
+
+        from google.auth import default as ga_default
         creds, _ = ga_default()
-        user_email = creds.service_account_email  # Corrected line
+        user_email = creds.service_account_email
         worksheet.share(user_email, perm_type='user', role='writer')
 
     sheet_name = f"Sheet{pageNum}"
@@ -364,6 +377,7 @@ def gamesToHist(f, gameWeek: int, sheet_names: List[str], histName: str, pageNum
         sheet = worksheet.worksheet(sheet_name)
 
     sheet.update([df.columns.values.tolist()] + df.fillna(-1).values.tolist())
+
 
 
 def paint_result(spreadsheet_name: str):
@@ -488,8 +502,3 @@ def process_bet_column_by_name(spreadsheet_name: str):
             else:
                 print("Skipping sheet due to error:", e)
     print(f"Processed all sheets. Summary updated. Total matches: {rc}")
-
-
-#gamesToHist(matchDayPDStats, 16, ['PDGames2526'], 'HIST12526', 1) Main function to generate predictions and upload to Google Sheets
-#process_bet_column_by_name("HIST12526") Process 'Bet' column and generate summary
-#paint_result('HIST12526') Paint results in 'Bet' column based on criteria
