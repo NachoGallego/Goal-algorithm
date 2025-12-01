@@ -5,8 +5,7 @@ from pathlib import Path
 # Assuming models.py is at the same level as app/ and routers/ (i.e., in the project root's parent)
 from ..models import FootballResult
 # Assuming data_loader is in the 'app' folder, making this import relative to 'routers' folder's parent
-from app.data_loader import results_data 
-
+from ..data_loader import results_data
 # Create a new router object.
 router = APIRouter(
     prefix="/results", 

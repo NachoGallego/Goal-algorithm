@@ -2,6 +2,7 @@
 FROM python:3.11-slim
 
 # Set working directory
+
 WORKDIR /app
 
 # Install system dependencies (optional but recommended)
@@ -22,4 +23,4 @@ COPY . .
 EXPOSE 8000
 
 # Start FastAPI with uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "API.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
