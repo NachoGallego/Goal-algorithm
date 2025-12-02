@@ -31,11 +31,7 @@ except Exception:
 
 
 # Configuration
-<<<<<<< Updated upstream
-API_TOKEN = "----"  # replace with your token
-=======
-API_TOKEN = "babfc8832fa344beb6f5398516d66ffe"  # replace with your token
->>>>>>> Stashed changes
+API_TOKEN = "---"  # replace with your token
 BASE_COMPETITIONS_URI = "https://api.football-data.org/v4/competitions"
 RATE_SLEEP = 15  # seconds (preserves previous behaviour)
 COMPETITION_TEAM_COUNTS = {
@@ -703,13 +699,8 @@ def gamesToHist(f, gameWeek: int, sheet_names: List[str], histName: str, pageNum
     if gc is None:
         raise RuntimeError("gspread not authenticated")
 
-<<<<<<< Updated upstream
-   
-    drive = GoogleDriveClient()  
-=======
 
     drive = GoogleDriveClient()
->>>>>>> Stashed changes
     folder_list = drive.list_folders_by_name("25-26")
 
     if not folder_list:
@@ -864,7 +855,4 @@ def process_bet_column_by_name(spreadsheet_name: str):
             else:
                 print("Skipping sheet due to error:", e)
     print(f"Processed all sheets. Summary updated. Total matches: {rc}")
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
