@@ -12,5 +12,5 @@ This scripts use api.football-data.org to retrieve all game data information.
 
 # Work in progess
 
-I'll be updating the scripts for this season and, also, I'll try to make them cleaner, this is the raw version I use on my own Google colab version so it's a bit of a mess. 
+I'll be updating the scripts for this season and, also, I'll try to make them cleaner, this is the raw version I use on my own Google colab so it's a bit of a mess. 
 
